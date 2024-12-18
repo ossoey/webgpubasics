@@ -1,0 +1,44 @@
+/* 
+*{
+    margin: 0;
+    padding: 0; 
+    box-sizing: border-box;
+}
+
+body{
+    font-size: 1rem;
+}
+
+.container{
+
+    display: flex; 
+    justify-content: center;
+    width: 100%;
+    border: 1px solid black; 
+
+    padding: 10px;
+
+}
+
+.echeanciers {
+    border: 1px solid blue; 
+
+}
+
+.echeances {
+    border: 1px solid blue; 
+
+}
+
+.rubriques {
+    border: 1px solid blue; 
+
+} */
+
+
+*{
+    margin: 0; 
+    padding: 0; 
+    box-sizing:border-box;
+}
+
