@@ -87,39 +87,22 @@ ui.createFooter = () =>{
 
 
 
-ui.column = {
-
-    
-    properties:{id : "mycolumn", tagName:"div", style: {border:"2px solid blue", margin:"10px"}},  
-  
-    elements: [
-               
-        {  properties:{id: "coco", tagName:"input", type: "color" ,  style:{border:"2px solid red"},
-           onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
-        },
-
-        {  properties:{id: "coco1", tagName:"input", type: "date" ,  style:{border:"2px solid red"},
-          onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
-        }
-                         
-    ]
-}
-
+ 
 
 ui.rubriquePan = {};
 
 ui.rubriquePan.element = {
 
     
-    properties:{id : "rubriquepan", tagName:"section", textContent: "rubriquePan", style: {border:"2px solid blue", margin:"10px"}},  
+    properties:{id : "rubriquepan", tagName:"section", textContent: "rubriquePan", style: {border:"2px solid blue", margin:"10px", display: "block"}},  
 
-    elements: [
+    children: [
                
-        {  properties:{id: "coco", tagName:"input", type: "color" ,  style:{border:"2px solid red"},
+        {  properties:{id: "coco", tagName:"input", type: "color" ,  textContent: "rubriquePan1",  style:{border:"2px solid red"},
            onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
         },
 
-        {  properties:{id: "coco1", tagName:"input", type: "date" ,  style:{border:"2px solid red"},
+        {  properties:{id: "coco1", tagName:"input", type: "date" ,   textContent: "rubriquePan1",  style:{border:"2px solid red"},
           onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
         }
                          
@@ -127,103 +110,146 @@ ui.rubriquePan.element = {
 
   
 }
+   
+ui.echeancier = {} ;
 
+  ui.echeancier.frame = {
+    properties: {
+        tagName: "section", id:"echeancierframeid", style: { border: "1px solid blue", width: "400px"}
+    } 
 
-ui.rubriquePan.chidren = {
+  }
 
-    properties:{id : "mycolumn", tagName:"div", style: {border:"2px solid blue", margin:"10px", padding: "3px"}},  
-  
-    elements: [
-               
-        {  properties:{id: "coco", tagName:"input", type: "color" ,  style:{border:"2px solid red"},
-           onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
-        },
+  ui.echeancier.rubriqueframe = {
+     properties: { tagName: "div", id:"rubriqueframeid", style: {border: "1px solid green", display:"flex"}  },
+     children : [
+         {properties:{ tagName:"label", textContent: "rubrique", style: {border:"1px solid red"}}},
+         {properties:{ tagName: "input",   placeholder: "Rubrique", style:{border: "1px solid red" , width: "200px"} }
+        } 
+     ]
+  }
 
-        {  properties:{id: "coco1", tagName:"input", type: "date" ,  style:{border:"2px solid red"},
-          onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
-        }
-                         
+  ui.echeancier.descriptionframe = {
+    properties: { tagName: "div", id:"descriptionframeid", style: {border: "1px solid green" , display:"flex"}  },
+    children : [
+        {properties:{ tagName:"label", textContent: "description", style: {border:"1px solid red"}}},
+        {properties:{ tagName: "input",   placeholder: "description", style:{border: "2px solid red"  , width: "200px"} }
+       } 
     ]
+ }
+
+ ui.echeancier.categoryframe = {
+    properties: { tagName: "div", id:"categoryframeid", style: {border: "1px solid green", display:"flex"}  },
+    children : [
+        {properties:{ tagName:"label", textContent: "category", style: {border:"1px solid red"}}},
+        {properties:{ tagName: "input",   placeholder: "category", style:{border: "2px solid red"} }
+       } 
+    ]
+ }
 
 
-}
+ ui.echeancier.tableframe = {
+    properties: { tagName: "div", id:"tableframeid", style: {boder: "1px solid green"},
+     
+innerHTML:   "<table>  <tr> <th>Company</th> <th>Contact</th>  <th>Country</th></tr>  <tr>  <td>Alfreds Futterkiste</td><td>Maria Anders</td>  <td>Germany</td></tr><tr> <td>Centro comercial Moctezuma</td><td>Francisco Chang</td> <td>Mexico</td>  </tr></table>" 
+
+     },
+
+ }
 
 
 
 
-ui.columnLoader = (columnParent, load) =>{
-    
-    let column = {};
-    column.elements = [];
-
-    function mapObjectToElement(elt, obj) {
-        for (const [key, value] of Object.entries(obj)) {
-              
-            if (typeof value === 'object') {
-                // Recursively handle nested objects
-                mapObjectToElement( elt[key], value);
+let cloneObjects = (source, target) => {
+        Object.entries(source).forEach(([key, value]) => {
+            if (typeof value === 'object' && value !== null) {
+                target[key] = {};
+                cloneObjects(value, target[key]);
             } else {
-                // Set the property directly on the element or its style
-                elt[key] = value;
+                target[key] = value;
             }
-        }
-    }
+        });    
+}
 
-    function createAndAppend (parent, eltproperties, appendFunction ="appendChild") {
+ui.loadColumn = (parentColumn, load) =>{
+
+    let column = {};
+    column.children = [];
+
+    let  createAndAppend = (parent, eltproperties, appendFunction ="appendChild") => {
 
         let element = document.createElement(eltproperties.tagName);
-        mapObjectToElement(element, eltproperties);
+        
+        cloneObjects(eltproperties, element);
+              
         parent[appendFunction](element);
+
         return element;
     }
 
-    
-    function createColumn() {
+    let  createElement = (container, load_, appendFunction ="appendChild") => {
 
-        if (column.element) {
-            column.element = createAndAppend (columnParent, load.properties,"appendChild");
-        }
+        return createAndAppend(container, load_.properties, appendFunction);
+    }
 
+    let  createChildren = (container, load_, appendFunction ="appendChild") => {
+         let children = [];
+         load_.children.forEach((child) =>{
+            children.push( createElement(container, child, appendFunction));
+         });
+
+         return children;
         
-
     }
 
-    function createElement(container, elt) {
 
-        let element =  createAndAppend (container, elt.properties,"appendChild");
-        column.elements.push(element); 
+    if (load.properties ) {
+        column.element = createElement(parentColumn, load);
+    } else if (load.children)  {
+        column.children = createChildren (parentColumn, load);
     }
 
-    function createElements() {
-
-        if (load.elements) {
-            load.elements.forEach((elt) => {
-
-                if (column.element) {
-                    createElement(column.element, elt)
-                } else if (!column.element) {
-                    createElement(columnParent, elt)
-                }
-                
-                 
-            });
+    if (load.children ) {
+        column.children = createChildren (column.element, load);
+    }
     
-        }
- 
-    }
-
-    
-    createColumn();
-    createElements();
 
     return column;
 }
 
 
 
-
-
 ui.load = () => {
+
+
+   // ui.loadColumn(document.querySelector("body"), ui.rubriquePan.element);
+
+
+
+   
+   let frameuiob = ui.loadColumn(document.querySelector("body"),   ui.echeancier.frame );
+
+      ui.loadColumn(frameuiob.element,    ui.echeancier.rubriqueframe );
+
+      ui.loadColumn(frameuiob.element,    ui.echeancier.descriptionframe );
+      ui.loadColumn(frameuiob.element,    ui.echeancier.categoryframe  ); 
+      ui.loadColumn(frameuiob.element,     ui.echeancier.tableframe ); 
+
+
+     
+        
+
+      
+ 
+
+      
+    // ui.loadColumn(frameuiob.element, ui.echeancier.rubriqueframe );
+
+    // cloneObjects(start, dest);
+
+    // console.log(start); 
+    // console.log(dest);
+
     // ui.createBody();
     // ui.createContainer();
     // ui.createHeader();
@@ -235,10 +261,6 @@ ui.load = () => {
     // ui.createFooter();
 
 
-    //ui.columnLoader(document.querySelector("body"), ui.column);
-    //let test =  ui.columnLoader(document.querySelector("body"), ui.column);
-
-    let rubriquePan =   ui.columnLoader(document.querySelector("body"), ui.rubriquePan.element);
  
 }
 
