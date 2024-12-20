@@ -89,33 +89,11 @@ ui.createFooter = () =>{
 
  
 
-ui.rubriquePan = {};
-
-ui.rubriquePan.element = {
-
-    
-    properties:{id : "rubriquepan", tagName:"section", textContent: "rubriquePan", style: {border:"2px solid blue", margin:"10px", display: "block"}},  
-
-    children: [
-               
-        {  properties:{id: "coco", tagName:"input", type: "color" ,  textContent: "rubriquePan1",  style:{border:"2px solid red"},
-           onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
-        },
-
-        {  properties:{id: "coco1", tagName:"input", type: "date" ,   textContent: "rubriquePan1",  style:{border:"2px solid red"},
-          onclick:(e) =>{console.log( ui.column.elements[0].properties.id)} }  
-        }
-                         
-    ]
-
-  
-}
-   
 ui.echeancier = {} ;
 
   ui.echeancier.frame = {
     properties: {
-        tagName: "section", id:"echeancierframeid", style: { border: "1px solid blue", width: "400px"}
+        tagName: "section", id:"echeancierframeid", textContent:"content", style: { border: "1px solid blue", width: "400px"}
     } 
 
   }
@@ -171,6 +149,20 @@ let cloneObjects = (source, target) => {
         });    
 }
 
+
+
+// Function to set a CSS property for all selected elements
+function setSamePropertiesToAllElements(values={ style: {
+    margin: "0",
+    padding: "0", 
+    boxSizing: "border-box"
+}}) {   
+  const allElements = document.querySelectorAll('*'); 
+  allElements.forEach(element => {
+     cloneObjects(values, element)
+  });
+}
+
 ui.loadColumn = (parentColumn, load) =>{
 
     let column = {};
@@ -218,48 +210,54 @@ ui.loadColumn = (parentColumn, load) =>{
 }
 
 
+ui.container = {
+    properties: {tagName:"div" , textContent:"mainContainer", style: {
+            border: "1px solid black", 
+            justifyContent:"center",
+            padding: "10px"
+    } }
+}
+
+ui.main = {
+    properties: {tagName:"main" , textContent:"main", style: {
+            border: "1px solid black", 
+            justifyContent:"center",
+            display: "flex", 
+            flexDirection:"row", 
+            padding: "8px"
+    } },
+
+    children: [
+        {properties:{tagName:"input"}},
+        {properties:{tagName:"input"}},
+
+    ]
+}
+
+
 
 ui.load = () => {
 
+    ui.var = {};
+    ui.var.container = ui.loadColumn(document.querySelector("body"),   ui.container );
 
-   // ui.loadColumn(document.querySelector("body"), ui.rubriquePan.element);
+    ui.var.container = ui.loadColumn(ui.var.container.element,   ui.main );
+
+      //  setSamePropertiesToAllElements() 
+        //ui.loadColumn(document.querySelector("body"),   ui.echeancier.frame );
 
 
 
    
-   let frameuiob = ui.loadColumn(document.querySelector("body"),   ui.echeancier.frame );
+//    let frameuiob = ui.loadColumn(document.querySelector("body"),   ui.echeancier.frame );
 
-      ui.loadColumn(frameuiob.element,    ui.echeancier.rubriqueframe );
+//       ui.loadColumn(frameuiob.element,    ui.echeancier.rubriqueframe );
 
-      ui.loadColumn(frameuiob.element,    ui.echeancier.descriptionframe );
-      ui.loadColumn(frameuiob.element,    ui.echeancier.categoryframe  ); 
-      ui.loadColumn(frameuiob.element,     ui.echeancier.tableframe ); 
-
-
-     
-        
+//       ui.loadColumn(frameuiob.element,    ui.echeancier.descriptionframe );
+//       ui.loadColumn(frameuiob.element,    ui.echeancier.categoryframe  ); 
+//       ui.loadColumn(frameuiob.element,     ui.echeancier.tableframe ); 
 
       
- 
-
-      
-    // ui.loadColumn(frameuiob.element, ui.echeancier.rubriqueframe );
-
-    // cloneObjects(start, dest);
-
-    // console.log(start); 
-    // console.log(dest);
-
-    // ui.createBody();
-    // ui.createContainer();
-    // ui.createHeader();
-    // ui.createMain();
-    //     ui.createNav();
-    //     ui.createSectionRubrique();
-    //     ui.createSectionEcheance();
-    //     ui.createSectionEcheancier();
-    // ui.createFooter();
-
 
  
 }

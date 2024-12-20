@@ -36,6 +36,16 @@
         window.addEventListener("load",()=>{
             ui.load();
         })
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const allElements = document.querySelectorAll('*');
+
+            allElements.forEach(element => {
+                element.style.margin = '0';
+                element.style.padding = '0';
+                element.style.boxSizing = 'border-box';
+                    });
+        });
       
     </script>
 
