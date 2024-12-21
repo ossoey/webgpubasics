@@ -1,10 +1,12 @@
 let ui = {};
 
 ui.PADDING_CST = 2.3;
-ui.PADDING_CST_SIZE = 6; 
+ui.PADDING_CST_SIZE = 6;
+ 
 
-ui.makePaddingLevel = (size,level) =>{
-   return Math.pow(ui.PADDING_CST, size-(level-1)) ;
+
+ui.makePaddingLevel = (size,level, adjustFactor = ui.PADDING_CST) =>{
+   return Math.pow(adjustFactor, size-(level-1)) ;
 }
 
 ui.createBody = () =>{
@@ -136,6 +138,9 @@ innerHTML:   "<table>  <tr> <th>Company</th> <th>Contact</th>  <th>Country</th><
  }
 
 
+let depthAdjustment = (params={size:5,level:1, factor:1.5}) =>{
+    return Math.pow(params.factor, params.size-(params.level-1)) ;
+}
 
 
 let cloneObjects = (source, target) => {
@@ -163,7 +168,7 @@ function setSamePropertiesToAllElements(values={ style: {
   });
 }
 
-ui.loadColumn = (parentColumn, load) =>{
+let loadColumn = (parentColumn, load) =>{
 
     let column = {};
     column.children = [];
@@ -223,25 +228,267 @@ ui.main = {
             border: "1px solid black", 
             justifyContent:"center",
             display: "flex", 
-            flexDirection:"row", 
+            flexDirection:"column", 
             padding: "8px"
-    } },
+    } }
+}
 
-    children: [
-        {properties:{tagName:"input"}},
-        {properties:{tagName:"input"}},
+ui.header = {
+    properties: {tagName:"header" , textContent:"main", style: {
+            border: "1px solid blue", 
+            justifyContent:"center",
+            display: "flex", 
+            flexDirection:"column", 
+            padding: "8px"
+    } }
+}
 
-    ]
+
+ui.footer = {
+    properties: {tagName:"header" , textContent:"main", style: {
+            border: "1px solid blue", 
+            justifyContent:"center",
+            display: "flex", 
+            flexDirection:"column", 
+            padding: "8px"
+    } }
 }
 
 
 
-ui.load = () => {
 
-    ui.var = {};
-    ui.var.container = ui.loadColumn(document.querySelector("body"),   ui.container );
 
-    ui.var.container = ui.loadColumn(ui.var.container.element,   ui.main );
+let buildFrameContainer = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"div" , textContent:"mainContainer", style: {
+                border: "1px solid black", 
+                justifyContent:"right",
+                
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`
+        } }
+    }
+
+    frames.container = loadColumn(document.querySelector("body"), container);
+}
+
+let buildFrameMain = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"main" , textContent:"", style: {
+                border: "1px solid black", 
+                justifyContent:"center",
+                alignItems: "center",
+ 
+                width: "40vw",
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                margin: "0 40vw",
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`
+        } }
+    }
+
+    frames.main = loadColumn(frames.container.element, container);
+}
+
+let buildFrameHeader = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"header" ,textContent:" ", style: {
+                border: "1px solid blue", 
+                justifyContent:"center",
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`, 
+                display: "flex",
+                flexDirection: "row", 
+                justifyContent: "space-between"
+        } },
+
+    }
+
+    frames.header = loadColumn(frames.main.element, container);
+}
+
+
+let buildFrameTitle = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"div", textContent: "ÉCHÉANCIERS", style: {
+                //border: "1px solid blue", 
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`, 
+        } } 
+    }
+
+    frames.title = loadColumn(frames.header.element, container);
+}
+
+let buildFrameNav = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"nav", textContent: "", style: {
+                //border: "1px solid blue", 
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`, 
+        } } 
+    }
+
+    frames.nav = loadColumn(frames.header.element, container);
+}
+
+
+let buildFrameNavUlist = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"ul", textContent: "", style: {
+                border: "1px solid blue", 
+                listStyleType:"none",
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`,
+                display: "flex"
+        
+        } },
+        children : [
+               {properties: {tagName: "li", textContent:"Rubrique", style: {borderRight: "1px solid", padding:"2px"} }}, 
+               {properties: {tagName: "li", textContent:"Écheance", style: {borderRight: "1px solid", padding:"2px"} }}, 
+               {properties: {tagName: "li", textContent:"Écheancier", style: {borderRight: "1px solid", padding:"2px"} }} 
+
+        ] 
+    }
+
+    frames.ul = loadColumn(frames.nav.element, container);
+}
+
+
+
+let buildFrameRubrique = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"section" , textContent:"Rubrique", style: {
+                border: "1px solid blue", 
+                justifyContent:"center",
+
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`,
+                display: "flex",
+                flexDirection: "column", 
+        } }
+    }
+
+    frames.rubrique = loadColumn(frames.main.element, container);
+}
+
+let buildFrameEcheance = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"section" , textContent:"Échéance", style: {
+                border: "1px solid blue", 
+                justifyContent:"center",
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`,
+                display: "flex",
+                flexDirection: "column", 
+        } }
+    }
+
+    frames.echeance = loadColumn(frames.main.element, container);
+}
+
+
+let buildFrameEcheancier = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"section" , textContent:"Échéancier", style: {
+                border: "1px solid blue", 
+                justifyContent:"center",
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`,
+                display: "flex",
+                flexDirection: "column", 
+        } }
+    }
+
+    frames.echeancier = loadColumn(frames.main.element, container);
+}
+
+
+
+let buildFrameFooter = (params = {}, frames) =>{
+
+    let container = {
+        properties: {tagName:"footer" , textContent:"footer", style: {
+                border: "1px solid blue", 
+                justifyContent:"center",
+                padding: `${depthAdjustment(params.padding)}${params.padding.unit}`,
+                fontSize: `${depthAdjustment(params.font)}${params.font.unit}`
+        } }
+    }
+
+    frames.footer = loadColumn(frames.main.element, container);
+}
+
+let buildAllFrames = () =>{
+
+    let frames = {}
+    let paddingFactor = 1.3;
+    let fontFactor = 2.2;
+    let maxDepthLevel = 5;  
+    
+    buildFrameContainer({padding:{level:7, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                         font:{level:7, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                                  }, frames);
+
+    buildFrameMain({padding:{level:2, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                             font:{level:2, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                                     }, frames);
+
+    buildFrameHeader({padding:{level:1, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                     font:{level:1, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                                }, frames);
+
+                                buildFrameTitle({padding:{level:2, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                                    font:{level:2, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                                               }, frames);
+
+                                buildFrameNav({padding:{level:3, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                                                font:{level:3, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                                                           }, frames);
+                                buildFrameNavUlist({padding:{level:3, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                                                            font:{level:2.3, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                                                                       }, frames);
+
+
+                                                           
+
+    buildFrameRubrique({padding:{level:2, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                         font:{level:2, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+            }, frames);
+
+    buildFrameEcheance({padding:{level:2, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                          font:{level:2, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+        }, frames);
+
+    buildFrameEcheancier({padding:{level:2, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                             font:{level:2, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+    }, frames);
+
+    buildFrameFooter({padding:{level:2, factor: paddingFactor, size: maxDepthLevel, unit:"px"},
+                                    font:{level:2, factor: fontFactor, size: maxDepthLevel, unit:"px"}
+                             }, frames);                                
+
+
+}
+
+
+let load = () => {
+
+    buildAllFrames();
+
+
+   // ui.var = {};
+   // ui.var.container = ui.loadColumn(document.querySelector("body"),   ui.container );
+
+   // ui.var.container = ui.loadColumn(ui.var.container.element,   ui.main );
 
       //  setSamePropertiesToAllElements() 
         //ui.loadColumn(document.querySelector("body"),   ui.echeancier.frame );
